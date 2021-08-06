@@ -4,7 +4,7 @@ project (lua)
 
 include_directories ("${PROJECT_SOURCE_DIR}/src")
 
-if (${MSVC_PROJECT})
+if (${USE_MSVC_PROJECT})
 	file (GLOB_RECURSE file_list
 		LIST_DIRECTORIES false
 		"${PROJECT_SOURCE_DIR}/src/*.h"
@@ -14,7 +14,7 @@ else ()
 	file (GLOB_RECURSE file_list
 		LIST_DIRECTORIES false
 		"${PROJECT_SOURCE_DIR}/src/*.c")
-endif (${MSVC_PROJECT})
+endif (${USE_MSVC_PROJECT})
 
 add_definitions(
 	-D_CRT_SECURE_NO_WARNINGS)
@@ -40,12 +40,17 @@ else ()
 		-DPLATFORM_WINDOWS)
 endif (${ANDROID_BUILD})
 
+# if (${USE_MSVC_PROJECT})
+	# set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /TP")
+	# set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} /TP")
+# endif()
+
 add_library (lua ${file_list})
 
 target_include_directories (lua PUBLIC
 	$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>)
 
-if (${MSVC_PROJECT})
+if (${USE_MSVC_PROJECT})
 	# organize filters
 	foreach(_source IN ITEMS ${file_list})
 		get_filename_component(_source_path "${_source}" PATH)
@@ -53,4 +58,4 @@ if (${MSVC_PROJECT})
 		string(REPLACE "/" "\\" _group_path "${_source_path_rel}")
 		source_group("${_group_path}" FILES "${_source}")
 	endforeach()
-endif (${MSVC_PROJECT})
+endif (${USE_MSVC_PROJECT})
